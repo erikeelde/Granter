@@ -4,13 +4,19 @@ import android.Manifest;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
+import java.util.List;
+
 import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import se.eelde.granter.Granter;
 import se.eelde.granter.app.databinding.ActivityPermissionRequestingBinding;
 
-public class PermissionRequestingActivity extends AppCompatActivity {
+public class PermissionRequestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final String TAG = "PermissionActivity";
 
     public static final int RC_CAMERA = 121;
     public static final int RC_2 = 122;
@@ -35,6 +41,7 @@ public class PermissionRequestingActivity extends AppCompatActivity {
         binding.permissionMultipleButton.setOnClickListener(view -> new Granter(this)
                 .requestCode(RC_multiple)
                 .addPermission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION)
+                .rationale("This app neeeds access to audio and location!")
                 .show());
 
         if (savedInstanceState == null) {
@@ -58,5 +65,15 @@ public class PermissionRequestingActivity extends AppCompatActivity {
     @AfterPermissionGranted(RC_multiple)
     public void rc_multiple() {
         Toast.makeText(this, "TODO: rc_multiple things", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
     }
 }

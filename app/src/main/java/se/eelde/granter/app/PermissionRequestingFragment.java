@@ -19,7 +19,7 @@ import se.eelde.granter.app.databinding.FragmentPermissionRequestingBinding;
 /**
  * Created in {@link R.layout#activity_permission_requesting}
  */
-public class PermissionRequestingFragment extends Fragment implements EasyPermissions.PermissionCallbacks {
+public class PermissionRequestingFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
     private static final int RC_READ_CONTACTS_PERM = 122;
@@ -35,7 +35,6 @@ public class PermissionRequestingFragment extends Fragment implements EasyPermis
         binding.fragmentPermission1Button.setOnClickListener(view -> new Granter(this)
                 .requestCode(RC_READ_CONTACTS_PERM)
                 .addPermission(Manifest.permission.READ_CONTACTS)
-                .rationale("This fragment neeeds access to your contacts!")
                 .show());
 
         return binding.getRoot();
@@ -44,15 +43,5 @@ public class PermissionRequestingFragment extends Fragment implements EasyPermis
     @AfterPermissionGranted(RC_READ_CONTACTS_PERM)
     private void contactsTask() {
         Toast.makeText(getActivity(), "TODO: Read contacts things", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
     }
 }
