@@ -15,13 +15,16 @@ public class GranterFragment extends Fragment {
 
     private static final String ARGUMENT_PERMISSIONS_ARRAY = "argument_permissions_array";
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
+    private static final String ARGUMENT_RATIONALE = "argument_rationale";
     private String[] requestedPermissions;
     private int requestCode;
+    private String rationale;
 
-    static GranterFragment newInstance(int requestCode, ArrayList<String> permissions) {
+    static GranterFragment newInstance(int requestCode, ArrayList<String> permissions, String rationale) {
         Bundle args = new Bundle();
         args.putStringArrayList(ARGUMENT_PERMISSIONS_ARRAY, permissions);
         args.putInt(ARGUMENT_REQUEST_CODE, requestCode);
+        args.putString(ARGUMENT_RATIONALE, rationale);
 
         GranterFragment fragment = new GranterFragment();
         fragment.setArguments(args);
@@ -33,9 +36,11 @@ public class GranterFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ArrayList<String> stringArrayList = getArguments().getStringArrayList(ARGUMENT_PERMISSIONS_ARRAY);
+        //noinspection ConstantConditions
         requestedPermissions = new String[stringArrayList.size()];
         stringArrayList.toArray(requestedPermissions);
         requestCode = getArguments().getInt(ARGUMENT_REQUEST_CODE);
+        rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
 
         checkPermission();
     }
@@ -43,7 +48,7 @@ public class GranterFragment extends Fragment {
     private void checkPermission() {
         if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
             EasyPermissions.requestPermissions(this,
-                    getString(R.string.permission_rationale_message),
+                    rationale,
                     requestCode,
                     requestedPermissions);
         } else {

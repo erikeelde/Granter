@@ -32,7 +32,11 @@ public class PermissionRequestingFragment extends Fragment implements EasyPermis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentPermissionRequestingBinding binding = FragmentPermissionRequestingBinding.inflate(inflater, container, false);
 
-        binding.fragmentPermission1Button.setOnClickListener(view -> new Granter(this).requestCode(RC_READ_CONTACTS_PERM).addPermission(Manifest.permission.SEND_SMS).show());
+        binding.fragmentPermission1Button.setOnClickListener(view -> new Granter(this)
+                .requestCode(RC_READ_CONTACTS_PERM)
+                .addPermission(Manifest.permission.READ_CONTACTS)
+                .rationale("This fragment neeeds access to your contacts!")
+                .show());
 
         return binding.getRoot();
     }
