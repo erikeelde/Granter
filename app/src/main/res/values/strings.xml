@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Permission Granter</string>
-    <string name="permission_1">Permission 1</string>
-    <string name="permission_2">Permission 2</string>
-    <string name="permission_multiple">Permission multiple</string>
-    <string name="fragment_permission_1">Fragment permission 1</string>
+    <string name="permission_1">CAMERA</string>
+    <string name="permission_2">SEND_SMS</string>
+    <string name="permission_multiple">RECORD_AUDIO &amp;&amp; ACCESS_FINE_LOCATION</string>
+    <string name="fragment_permission_1">Fragment READ_CONTACTS</string>
 </resources>

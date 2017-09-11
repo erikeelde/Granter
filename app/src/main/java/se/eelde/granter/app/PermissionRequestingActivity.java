@@ -12,7 +12,7 @@ import se.eelde.granter.app.databinding.ActivityPermissionRequestingBinding;
 
 public class PermissionRequestingActivity extends AppCompatActivity {
 
-    public static final int RC_1 = 121;
+    public static final int RC_CAMERA = 121;
     public static final int RC_2 = 122;
     public static final int RC_multiple = 123;
 
@@ -23,7 +23,7 @@ public class PermissionRequestingActivity extends AppCompatActivity {
         ActivityPermissionRequestingBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_permission_requesting);
 
         binding.permission1Button.setOnClickListener(view -> new Granter(this)
-                .requestCode(RC_1)
+                .requestCode(RC_CAMERA)
                 .addPermission(Manifest.permission.CAMERA)
                 .show());
 
@@ -43,10 +43,9 @@ public class PermissionRequestingActivity extends AppCompatActivity {
                     .replace(binding.fragmentContainer.getId(), PermissionRequestingFragment.newInstance())
                     .commit();
         }
-
     }
 
-    @AfterPermissionGranted(RC_1)
+    @AfterPermissionGranted(RC_CAMERA)
     public void rc1() {
         Toast.makeText(this, "TODO: rc1 things", Toast.LENGTH_LONG).show();
     }
