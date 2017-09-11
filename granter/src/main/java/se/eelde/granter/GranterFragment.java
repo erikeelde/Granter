@@ -48,10 +48,6 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
         sendUserToSettings = getArguments().getBoolean(ARGUMENT_SEND_USER_TO_SETTINGS, true);
 
-        checkPermission();
-    }
-
-    private void checkPermission() {
         if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
             EasyPermissions.requestPermissions(this,
                     rationale,
