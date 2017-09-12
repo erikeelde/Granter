@@ -1,6 +1,5 @@
 package se.eelde.granter;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
@@ -25,6 +24,10 @@ public class Granter {
         this.requestCode = requestCode;
         this.rationale = rationale;
         this.sendUserToSettings = sendUserToSettings;
+    }
+
+    public void show() {
+        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale, sendUserToSettings), PERMISSIONS_FRAGMENT_TAG).commit();
     }
 
     @SuppressWarnings("unused")
@@ -74,9 +77,5 @@ public class Granter {
         public Granter build() {
             return new Granter(fragmentManager, permissions, requestCode, rationale, sendUserToSettings);
         }
-    }
-
-    public void show() {
-        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale, sendUserToSettings), PERMISSIONS_FRAGMENT_TAG).commit();
     }
 }

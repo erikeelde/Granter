@@ -16,11 +16,10 @@ import se.eelde.granter.app.databinding.ActivityPermissionRequestingBinding;
 
 public class PermissionRequestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    private static final String TAG = "PermissionActivity";
-
     public static final int RC_CAMERA = 121;
     public static final int RC_2 = 122;
     public static final int RC_multiple = 123;
+    private static final String TAG = "PermissionActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -65,6 +65,11 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         callback(requestCode, permissions, grantResults);
+
+        getFragmentManager()
+                .beginTransaction()
+                .remove(this)
+                .commit();
     }
 
     @Override

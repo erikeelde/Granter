@@ -1,4 +1,3 @@
 <resources>
     <string name="permission_rationale_message">This app needs access to permissions to work.</string>
-    <item name="permission_rationale_message" type="id"/>
 </resources>
