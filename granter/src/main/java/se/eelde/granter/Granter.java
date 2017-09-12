@@ -12,50 +12,68 @@ import java.util.Arrays;
 
 public class Granter {
     private static final String PERMISSIONS_FRAGMENT_TAG = "permissions_fragment_tag";
+
     private final FragmentManager fragmentManager;
-    private final ArrayList<String> permissions = new ArrayList<>();
-    private final Resources resources;
-    private int requestCode;
-    private String rationale = null;
-    private boolean sendUserToSettings = true;
+    private final ArrayList<String> permissions;
+    private final int requestCode;
+    private final String rationale;
+    private final boolean sendUserToSettings;
 
-
-    @SuppressWarnings("unused")
-    public Granter(AppCompatActivity activity) {
-        fragmentManager = activity.getSupportFragmentManager();
-        resources = activity.getResources();
-    }
-
-    @SuppressWarnings("unused")
-    public Granter(Fragment fragment) {
-        fragmentManager = fragment.getChildFragmentManager();
-        resources = fragment.getResources();
-    }
-
-    public Granter requestCode(int requestCode) {
+    private Granter(FragmentManager fragmentManager, ArrayList<String> permissions, int requestCode, String rationale, boolean sendUserToSettings) {
+        this.fragmentManager = fragmentManager;
+        this.permissions = permissions;
         this.requestCode = requestCode;
-        return this;
-    }
-
-    public Granter addPermission(String... permissions) {
-        this.permissions.addAll(Arrays.asList(permissions));
-        return this;
-    }
-
-    public Granter rationale(String rationale) {
         this.rationale = rationale;
-        return this;
+        this.sendUserToSettings = sendUserToSettings;
     }
 
     @SuppressWarnings("unused")
-    public Granter rationale(@StringRes int rationale) {
-        this.rationale = resources.getString(rationale);
-        return this;
-    }
+    public static class Builder {
+        private final FragmentManager fragmentManager;
+        private final ArrayList<String> permissions = new ArrayList<>();
+        private final Resources resources;
+        private int requestCode;
+        private String rationale = null;
+        private boolean sendUserToSettings = true;
 
-    public Granter sendUserToSettings(boolean sendUserToSettings) {
-        this.sendUserToSettings = sendUserToSettings;
-        return this;
+        public Builder(AppCompatActivity activity) {
+            fragmentManager = activity.getSupportFragmentManager();
+            resources = activity.getResources();
+        }
+
+        public Builder(Fragment fragment) {
+            fragmentManager = fragment.getChildFragmentManager();
+            resources = fragment.getResources();
+        }
+
+        public Builder requestCode(int requestCode) {
+            this.requestCode = requestCode;
+            return this;
+        }
+
+        public Builder addPermission(String... permissions) {
+            this.permissions.addAll(Arrays.asList(permissions));
+            return this;
+        }
+
+        public Builder rationale(String rationale) {
+            this.rationale = rationale;
+            return this;
+        }
+
+        public Builder rationale(@StringRes int rationale) {
+            this.rationale = resources.getString(rationale);
+            return this;
+        }
+
+        public Builder sendUserToSettings(boolean sendUserToSettings) {
+            this.sendUserToSettings = sendUserToSettings;
+            return this;
+        }
+
+        public Granter build() {
+            return new Granter(fragmentManager, permissions, requestCode, rationale, sendUserToSettings);
+        }
     }
 
     public void show() {

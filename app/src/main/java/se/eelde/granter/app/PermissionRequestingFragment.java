@@ -32,9 +32,10 @@ public class PermissionRequestingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentPermissionRequestingBinding binding = FragmentPermissionRequestingBinding.inflate(inflater, container, false);
 
-        binding.fragmentPermission1Button.setOnClickListener(view -> new Granter(this)
+        binding.fragmentPermission1Button.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_READ_CONTACTS_PERM)
                 .addPermission(Manifest.permission.READ_CONTACTS)
+                .build()
                 .show());
 
         return binding.getRoot();

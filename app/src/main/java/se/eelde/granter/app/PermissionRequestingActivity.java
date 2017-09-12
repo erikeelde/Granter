@@ -28,20 +28,23 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
 
         ActivityPermissionRequestingBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_permission_requesting);
 
-        binding.permission1Button.setOnClickListener(view -> new Granter(this)
+        binding.permission1Button.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_CAMERA)
                 .addPermission(Manifest.permission.CAMERA)
+                .build()
                 .show());
 
-        binding.permission2Button.setOnClickListener(view -> new Granter(this)
+        binding.permission2Button.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_2)
                 .addPermission(Manifest.permission.SEND_SMS)
+                .build()
                 .show());
 
-        binding.permissionMultipleButton.setOnClickListener(view -> new Granter(this)
+        binding.permissionMultipleButton.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_multiple)
                 .addPermission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION)
                 .rationale("This app neeeds access to audio and location!")
+                .build()
                 .show());
 
         if (savedInstanceState == null) {
