@@ -1,5 +1,7 @@
 package se.eelde.granter;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +21,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
     private static final String ARGUMENT_RATIONALE = "argument_rationale";
     private static final String ARGUMENT_SEND_USER_TO_SETTINGS = "argument_send_user_to_settings";
+    private static final int RC_SETTINGS_DIALOG = 1324;
     private String[] requestedPermissions;
     private int requestCode;
     private String rationale;
@@ -66,29 +69,40 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
 
         callback(requestCode, permissions, grantResults);
 
-        getFragmentManager()
-                .beginTransaction()
-                .remove(this)
-                .commit();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (RC_SETTINGS_DIALOG == requestCode) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                int[] ints = new int[requestedPermissions.length];
+                Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
+                callback(requestCode, requestedPermissions, ints);
+            }
+        }
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         if (sendUserToSettings && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).build().show();
+            new AppSettingsDialog.Builder(this).setRequestCode(RC_SETTINGS_DIALOG).build().show();
+        } else {
+            int[] ints = new int[perms.size()];
+            Arrays.fill(ints, PackageManager.PERMISSION_DENIED);
+            callback(requestCode, requestedPermissions, ints);
         }
     }
 
     private void callback(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (getParentFragment() != null) {
-            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this, getParentFragment());
+            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getParentFragment());
         } else if (getActivity() != null) {
-            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this, getActivity());
+            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getActivity());
         }
     }
 }
