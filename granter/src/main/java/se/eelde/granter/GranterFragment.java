@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -20,19 +21,18 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     private static final String ARGUMENT_PERMISSIONS_ARRAY = "argument_permissions_array";
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
     private static final String ARGUMENT_RATIONALE = "argument_rationale";
-    private static final String ARGUMENT_SEND_USER_TO_SETTINGS = "argument_send_user_to_settings";
     private static final int RC_SETTINGS_DIALOG = 1324;
+    private static final int RC_PERMISSIONS = 13267;
     private String[] requestedPermissions;
     private int requestCode;
     private String rationale;
-    private boolean sendUserToSettings = true;
+    private boolean shouldHaveShownRationale;
 
-    static GranterFragment newInstance(ArrayList<String> permissions, int requestCode, String rationale, boolean sendUserToSettings) {
+    static GranterFragment newInstance(ArrayList<String> permissions, int requestCode, String rationale) {
         Bundle args = new Bundle();
         args.putStringArrayList(ARGUMENT_PERMISSIONS_ARRAY, permissions);
         args.putInt(ARGUMENT_REQUEST_CODE, requestCode);
         args.putString(ARGUMENT_RATIONALE, rationale);
-        args.putBoolean(ARGUMENT_SEND_USER_TO_SETTINGS, sendUserToSettings);
 
         GranterFragment fragment = new GranterFragment();
         fragment.setArguments(args);
@@ -49,17 +49,18 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         stringArrayList.toArray(requestedPermissions);
         requestCode = getArguments().getInt(ARGUMENT_REQUEST_CODE);
         rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
-        sendUserToSettings = getArguments().getBoolean(ARGUMENT_SEND_USER_TO_SETTINGS, true);
+
+        shouldHaveShownRationale = Stolen.shouldShowRationale(this, requestedPermissions);
 
         if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
             EasyPermissions.requestPermissions(this,
                     rationale,
-                    requestCode,
+                    RC_PERMISSIONS,
                     requestedPermissions);
         } else {
             int[] ints = new int[requestedPermissions.length];
             Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
-            callback(requestCode, requestedPermissions, ints);
+            callback(requestedPermissions, ints);
         }
     }
 
@@ -67,42 +68,52 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        callback(requestCode, permissions, grantResults);
-
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int internalRequestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RC_SETTINGS_DIALOG == requestCode) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 int[] ints = new int[requestedPermissions.length];
                 Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
-                callback(requestCode, requestedPermissions, ints);
+                callback(requestedPermissions, ints);
             }
         }
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
+    @AfterPermissionGranted(RC_PERMISSIONS)
+    public void allPermissionsGranted() {
+        Stolen.callAnnotations(getCallee(), requestCode);
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        if (sendUserToSettings && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+    public void onPermissionsGranted(int internalRequestCode, List<String> perms) {
+        Stolen.callGrantedCallback(getClass(), requestCode, perms);
+    }
+
+    @Override
+    public void onPermissionsDenied(int internalRequestCode, List<String> perms) {
+        if (!shouldHaveShownRationale && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).setRequestCode(RC_SETTINGS_DIALOG).build().show();
         } else {
-            int[] ints = new int[perms.size()];
-            Arrays.fill(ints, PackageManager.PERMISSION_DENIED);
-            callback(requestCode, requestedPermissions, ints);
+            Stolen.callDeniedCallback(getCallee(), requestCode, perms);
         }
     }
 
-    private void callback(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    @Nullable
+    public Object getCallee() {
         if (getParentFragment() != null) {
-            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getParentFragment());
+            return getParentFragment();
         } else if (getActivity() != null) {
-            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getActivity());
+            return getActivity();
+        } else {
+            return null;
         }
+    }
+
+    private void callback(@NonNull String[] permissions, @NonNull int[] grantResults) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getCallee());
     }
 }

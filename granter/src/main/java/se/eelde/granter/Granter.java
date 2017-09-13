@@ -16,18 +16,16 @@ public class Granter {
     private final ArrayList<String> permissions;
     private final int requestCode;
     private final String rationale;
-    private final boolean sendUserToSettings;
 
-    private Granter(FragmentManager fragmentManager, ArrayList<String> permissions, int requestCode, String rationale, boolean sendUserToSettings) {
+    private Granter(FragmentManager fragmentManager, ArrayList<String> permissions, int requestCode, String rationale) {
         this.fragmentManager = fragmentManager;
         this.permissions = permissions;
         this.requestCode = requestCode;
         this.rationale = rationale;
-        this.sendUserToSettings = sendUserToSettings;
     }
 
     public void show() {
-        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale, sendUserToSettings), PERMISSIONS_FRAGMENT_TAG).commit();
+        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale), PERMISSIONS_FRAGMENT_TAG).commit();
     }
 
     @SuppressWarnings("unused")
@@ -37,7 +35,6 @@ public class Granter {
         private final Resources resources;
         private int requestCode;
         private String rationale = null;
-        private boolean sendUserToSettings = true;
 
         public Builder(AppCompatActivity activity) {
             fragmentManager = activity.getSupportFragmentManager();
@@ -69,13 +66,8 @@ public class Granter {
             return this;
         }
 
-        public Builder sendUserToSettings(boolean sendUserToSettings) {
-            this.sendUserToSettings = sendUserToSettings;
-            return this;
-        }
-
         public Granter build() {
-            return new Granter(fragmentManager, permissions, requestCode, rationale, sendUserToSettings);
+            return new Granter(fragmentManager, permissions, requestCode, rationale);
         }
     }
 }
