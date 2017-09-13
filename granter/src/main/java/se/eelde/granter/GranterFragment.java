@@ -1,6 +1,5 @@
 package se.eelde.granter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -74,12 +73,8 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     @Override
     public void onActivityResult(int internalRequestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RC_SETTINGS_DIALOG == requestCode) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                int[] ints = new int[requestedPermissions.length];
-                Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
-                callback(requestedPermissions, ints);
-            }
+        if (RC_SETTINGS_DIALOG == internalRequestCode) {
+            callback(requestedPermissions, Stolen.grantsFromPermissions(this, requestedPermissions));
         }
     }
 

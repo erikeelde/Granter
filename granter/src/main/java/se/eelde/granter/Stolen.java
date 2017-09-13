@@ -1,5 +1,6 @@
 package se.eelde.granter;
 
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
@@ -80,5 +81,15 @@ class Stolen {
             }
         }
         return false;
+    }
+
+    static int[] grantsFromPermissions(Fragment fragment, @NonNull String[] requestedPermissions) {
+        int[] grantResults = new int[requestedPermissions.length];
+
+        for (int i = 0; i < requestedPermissions.length; i++) {
+            grantResults[i] = EasyPermissions.hasPermissions(fragment.getContext(), requestedPermissions[i]) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED;
+        }
+
+        return grantResults;
     }
 }
