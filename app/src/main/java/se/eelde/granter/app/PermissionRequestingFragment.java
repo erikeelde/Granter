@@ -17,7 +17,6 @@ import se.eelde.granter.app.databinding.FragmentPermissionRequestingBinding;
  */
 public class PermissionRequestingFragment extends Fragment {
 
-    private static final String TAG = "MainFragment";
     private static final int RC_READ_CONTACTS_PERM = 122;
 
     public static Fragment newInstance() {

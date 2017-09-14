@@ -19,12 +19,17 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     public static final int RC_2 = 122;
     public static final int RC_multiple = 123;
     private static final String TAG = "PermissionActivity";
+    private ActivityPermissionRequestingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityPermissionRequestingBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_permission_requesting);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_permission_requesting);
+
+        binding.regularPermission.setOnClickListener(view -> RegularPermissionActivity.start(this));
+
+        binding.buttonPermisoPermission.setOnClickListener(view -> PermisoPermissionActivity.start(this));
 
         binding.permission1Button.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_CAMERA)
@@ -56,6 +61,10 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     @AfterPermissionGranted(RC_CAMERA)
     public void rc1() {
         Toast.makeText(this, "TODO: rc1 things", Toast.LENGTH_SHORT).show();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(binding.fragmentContainer.getId(), DummyFragment.newInstance())
+                .commit();
     }
 
     @AfterPermissionGranted(RC_2)
@@ -77,4 +86,5 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         Toast.makeText(this, "onPermissionsDenied:" + requestCode + ":" + perms.size(), Toast.LENGTH_LONG).show();
     }
+
 }
