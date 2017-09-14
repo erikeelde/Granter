@@ -20,18 +20,20 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     private static final String ARGUMENT_PERMISSIONS_ARRAY = "argument_permissions_array";
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
     private static final String ARGUMENT_RATIONALE = "argument_rationale";
+    private static final String ARGUMENT_SYSTEM_SETTINGS_RATIONALE = "argument_system_settings_rationale";
     private static final int RC_SETTINGS_DIALOG = 1324;
     private static final int RC_PERMISSIONS = 13267;
+    private boolean shouldHaveShownRationale;
     private String[] requestedPermissions;
     private int requestCode;
-    private String rationale;
-    private boolean shouldHaveShownRationale;
+    private String systemSettingsrationale;
 
-    static GranterFragment newInstance(ArrayList<String> permissions, int requestCode, String rationale) {
+    static GranterFragment newInstance(ArrayList<String> permissions, int requestCode, String rationale, String systemSettingRationale) {
         Bundle args = new Bundle();
         args.putStringArrayList(ARGUMENT_PERMISSIONS_ARRAY, permissions);
         args.putInt(ARGUMENT_REQUEST_CODE, requestCode);
         args.putString(ARGUMENT_RATIONALE, rationale);
+        args.putString(ARGUMENT_SYSTEM_SETTINGS_RATIONALE, systemSettingRationale);
 
         GranterFragment fragment = new GranterFragment();
         fragment.setArguments(args);
@@ -47,7 +49,8 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         requestedPermissions = new String[stringArrayList.size()];
         stringArrayList.toArray(requestedPermissions);
         requestCode = getArguments().getInt(ARGUMENT_REQUEST_CODE);
-        rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
+        String rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
+        systemSettingsrationale = getArguments().getString(ARGUMENT_SYSTEM_SETTINGS_RATIONALE, getString(R.string.permission_system_settings_rationale_message));
 
         shouldHaveShownRationale = Stolen.shouldShowRationale(this, requestedPermissions);
 
@@ -91,7 +94,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     @Override
     public void onPermissionsDenied(int internalRequestCode, List<String> perms) {
         if (!shouldHaveShownRationale && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).setRequestCode(RC_SETTINGS_DIALOG).build().show();
+            new AppSettingsDialog.Builder(this).setRationale(systemSettingsrationale).setRequestCode(RC_SETTINGS_DIALOG).build().show();
         } else {
             Stolen.callDeniedCallback(getCallee(), requestCode, perms);
         }

@@ -16,16 +16,18 @@ public class Granter {
     private final ArrayList<String> permissions;
     private final int requestCode;
     private final String rationale;
+    private String systemSettingRationale;
 
-    private Granter(FragmentManager fragmentManager, ArrayList<String> permissions, int requestCode, String rationale) {
+    private Granter(FragmentManager fragmentManager, ArrayList<String> permissions, int requestCode, String rationale, String systemSettingRationale) {
         this.fragmentManager = fragmentManager;
         this.permissions = permissions;
         this.requestCode = requestCode;
         this.rationale = rationale;
+        this.systemSettingRationale = systemSettingRationale;
     }
 
     public void show() {
-        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale), PERMISSIONS_FRAGMENT_TAG).commit();
+        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale, systemSettingRationale), PERMISSIONS_FRAGMENT_TAG).commit();
     }
 
     @SuppressWarnings("unused")
@@ -35,6 +37,7 @@ public class Granter {
         private final Resources resources;
         private int requestCode;
         private String rationale = null;
+        private String systemSettingRationale = null;
 
         public Builder(AppCompatActivity activity) {
             fragmentManager = activity.getSupportFragmentManager();
@@ -66,8 +69,18 @@ public class Granter {
             return this;
         }
 
+        public Builder systemSettingRationale(String systemSettingRationale) {
+            this.systemSettingRationale = systemSettingRationale;
+            return this;
+        }
+
+        public Builder systemSettingRationale(@StringRes int systemSettingRationale) {
+            this.systemSettingRationale = resources.getString(systemSettingRationale);
+            return this;
+        }
+
         public Granter build() {
-            return new Granter(fragmentManager, permissions, requestCode, rationale);
+            return new Granter(fragmentManager, permissions, requestCode, rationale, systemSettingRationale);
         }
     }
 }
