@@ -2,7 +2,10 @@ package se.eelde.granter;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -83,20 +86,58 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
 
     @AfterPermissionGranted(RC_PERMISSIONS)
     public void allPermissionsGranted() {
-        Stolen.callAnnotations(getCallee(), requestCode);
-    }
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            new Handler(Looper.getMainLooper())
+                    .post(new Runnable() {
+                              @Override
+                              public void run() {
+                                  Stolen.callAnnotations(getCallee(), requestCode);
 
-    @Override
-    public void onPermissionsGranted(int internalRequestCode, List<String> perms) {
-        Stolen.callGrantedCallback(getClass(), requestCode, perms);
-    }
-
-    @Override
-    public void onPermissionsDenied(int internalRequestCode, List<String> perms) {
-        if (!shouldHaveShownRationale && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).setRationale(systemSettingsrationale).setRequestCode(RC_SETTINGS_DIALOG).build().show();
+                              }
+                          }
+                    );
         } else {
-            Stolen.callDeniedCallback(getCallee(), requestCode, perms);
+            Stolen.callAnnotations(getCallee(), requestCode);
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(int internalRequestCode, final List<String> perms) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            new Handler(Looper.getMainLooper())
+                    .post(new Runnable() {
+                              @Override
+                              public void run() {
+                                  Stolen.callGrantedCallback(getClass(), requestCode, perms);
+                              }
+                          }
+                    );
+        } else {
+            Stolen.callGrantedCallback(getClass(), requestCode, perms);
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int internalRequestCode, final List<String> perms) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            new Handler(Looper.getMainLooper())
+                    .post(new Runnable() {
+                              @Override
+                              public void run() {
+                                  if (!shouldHaveShownRationale && EasyPermissions.somePermissionPermanentlyDenied(GranterFragment.this, perms)) {
+                                      new AppSettingsDialog.Builder(GranterFragment.this).setRationale(systemSettingsrationale).setRequestCode(RC_SETTINGS_DIALOG).build().show();
+                                  } else {
+                                      Stolen.callDeniedCallback(getCallee(), requestCode, perms);
+                                  }
+                              }
+                          }
+                    );
+        } else {
+            if (!shouldHaveShownRationale && EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+                new AppSettingsDialog.Builder(this).setRationale(systemSettingsrationale).setRequestCode(RC_SETTINGS_DIALOG).build().show();
+            } else {
+                Stolen.callDeniedCallback(getCallee(), requestCode, perms);
+            }
         }
     }
 

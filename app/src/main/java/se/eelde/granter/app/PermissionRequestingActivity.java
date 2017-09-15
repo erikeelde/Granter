@@ -61,6 +61,7 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     @AfterPermissionGranted(RC_CAMERA)
     public void rc1() {
         Toast.makeText(this, "TODO: rc1 things", Toast.LENGTH_SHORT).show();
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(binding.fragmentContainer.getId(), DummyFragment.newInstance())
