@@ -11,6 +11,10 @@ import java.util.List;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+/**
+ * "Stolen" from EasyPermissions. If the time presents itself we should arrange a PR
+ * towards Easypermissions to provide this functionality.
+ */
 class Stolen {
     static void callGrantedCallback(Object callee, int requestCode, List<String> perms) {
         if (callee instanceof EasyPermissions.PermissionCallbacks) {
@@ -26,16 +30,13 @@ class Stolen {
 
     static void callAnnotations(Object object, int requestCode) {
         Class clazz = object.getClass();
-        if (isUsingAndroidAnnotations(object)) {
-            clazz = clazz.getSuperclass();
-        }
 
         while (clazz != null) {
             for (Method method : clazz.getDeclaredMethods()) {
-                AfterPermissionGranted ann = method.getAnnotation(AfterPermissionGranted.class);
-                if (ann != null) {
+                AfterPermissionGranted annotation = method.getAnnotation(AfterPermissionGranted.class);
+                if (annotation != null) {
                     // Check for annotated methods with matching request code.
-                    if (ann.value() == requestCode) {
+                    if (annotation.value() == requestCode) {
                         // Method must be void so that we can invoke it
                         if (method.getParameterTypes().length > 0) {
                             throw new RuntimeException(
@@ -56,21 +57,6 @@ class Stolen {
             }
 
             clazz = clazz.getSuperclass();
-        }
-    }
-
-    /**
-     * Determine if the project is using the AndroidAnnotations library.
-     */
-    private static boolean isUsingAndroidAnnotations(@NonNull Object object) {
-        if (!object.getClass().getSimpleName().endsWith("_")) {
-            return false;
-        }
-        try {
-            Class clazz = Class.forName("org.androidannotations.api.view.HasViews");
-            return clazz.isInstance(object);
-        } catch (ClassNotFoundException e) {
-            return false;
         }
     }
 
