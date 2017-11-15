@@ -29,8 +29,6 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
 
         binding.regularPermission.setOnClickListener(view -> RegularPermissionActivity.start(this));
 
-        binding.buttonPermisoPermission.setOnClickListener(view -> PermisoPermissionActivity.start(this));
-
         binding.permission1Button.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_CAMERA)
                 .addPermission(Manifest.permission.CAMERA)
