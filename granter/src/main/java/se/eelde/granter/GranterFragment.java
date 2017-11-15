@@ -58,10 +58,12 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         shouldHaveShownRationale = Stolen.shouldShowRationale(this, requestedPermissions);
 
         if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
-            EasyPermissions.requestPermissions(this,
-                    rationale,
-                    RC_PERMISSIONS,
-                    requestedPermissions);
+            if (savedInstanceState == null) {
+                EasyPermissions.requestPermissions(this,
+                        rationale,
+                        RC_PERMISSIONS,
+                        requestedPermissions);
+            }
         } else {
             int[] ints = new int[requestedPermissions.length];
             Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
