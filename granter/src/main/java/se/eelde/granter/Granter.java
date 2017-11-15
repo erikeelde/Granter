@@ -35,7 +35,7 @@ public class Granter {
         private final FragmentManager fragmentManager;
         private final ArrayList<String> permissions = new ArrayList<>();
         private final Resources resources;
-        private int requestCode;
+        private int requestCode = 7896;
         private String rationale = null;
         private String systemSettingRationale = null;
 
