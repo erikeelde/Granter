@@ -1,9 +1,11 @@
 package se.eelde.granter;
 
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -27,7 +29,16 @@ public class Granter {
     }
 
     public void show() {
-        fragmentManager.beginTransaction().add(GranterFragment.newInstance(permissions, requestCode, rationale, systemSettingRationale), PERMISSIONS_FRAGMENT_TAG).commit();
+        @Nullable
+        Fragment oldGranterFragment = fragmentManager.findFragmentByTag(PERMISSIONS_FRAGMENT_TAG);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (oldGranterFragment != null) {
+            fragmentTransaction.remove(oldGranterFragment);
+        }
+
+        fragmentTransaction.add(GranterFragment.newInstance(permissions, requestCode, rationale, systemSettingRationale), PERMISSIONS_FRAGMENT_TAG)
+                .commit();
     }
 
     @SuppressWarnings("unused")
