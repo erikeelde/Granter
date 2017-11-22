@@ -72,6 +72,15 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // with no ui show we would get a null savedInstanceState in onCreate and
+        // would not be able to distinguish between new creates and recreates of the fragment.
+        outState.putBoolean("recreated", true);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -122,6 +131,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     @Override
     public void onPermissionsDenied(int internalRequestCode, final List<String> perms) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            // fix to be able to do fragment transactions in the permission callbacks
             new Handler(Looper.getMainLooper())
                     .post(new Runnable() {
                               @Override
