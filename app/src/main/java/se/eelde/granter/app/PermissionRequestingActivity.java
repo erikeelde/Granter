@@ -15,9 +15,9 @@ import se.eelde.granter.app.databinding.ActivityPermissionRequestingBinding;
 
 public class PermissionRequestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    public static final int RC_CAMERA = 121;
-    public static final int RC_2 = 122;
-    public static final int RC_multiple = 123;
+    private static final int RC_CAMERA = 121;
+    private static final int RC_2 = 122;
+    private static final int RC_multiple = 123;
     private static final String TAG = "PermissionActivity";
     private ActivityPermissionRequestingBinding binding;
 
@@ -44,7 +44,7 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
         binding.permissionMultipleButton.setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_multiple)
                 .addPermission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION)
-                .rationale("This app neeeds access to audio and location!")
+                .rationale("This app needs access to audio and location!")
                 .build()
                 .show());
 

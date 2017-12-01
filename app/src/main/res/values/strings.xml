@@ -4,4 +4,6 @@
     <string name="permission_2">SEND_SMS</string>
     <string name="permission_multiple">RECORD_AUDIO &amp;&amp; ACCESS_FINE_LOCATION</string>
     <string name="fragment_permission_1">Fragment READ_CONTACTS</string>
+    <string name="lol">lol</string>
+    <string name="regular_permission">Regular permission</string>
 </resources>
