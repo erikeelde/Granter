@@ -11,21 +11,21 @@ class GranterUsageDetector : Detector(), Detector.UastScanner {
         return Arrays.asList("requestCode")
     }
 
-    override fun visitMethod(context: JavaContext?, call: UCallExpression?, method: PsiMethod?) {
-        val methodName = call!!.methodName!!
+    override fun visitMethod(context: JavaContext, node: UCallExpression, method: PsiMethod) {
+        val methodName = node.methodName!!
 
-        val evaluator = context!!.evaluator
+        val evaluator = context.evaluator
 
         if (methodName == "requestCode") {
             val message = StringBuilder()
 
-            message.append("No receiver for requestCode(" + call.valueArguments[0] + "). \n")
-            message.append("Expecting to find either @AfterPermissionGranted(" + call.valueArguments[0] + ") " +
-                    " or @AfterPermissionGranted(" + call.valueArguments[0].evaluate() + ") annotated method. \n")
+            message.append("No receiver for requestCode(" + node.valueArguments[0] + "). \n")
+            message.append("Expecting to find either @AfterPermissionGranted(" + node.valueArguments[0] + ") " +
+                    " or @AfterPermissionGranted(" + node.valueArguments[0].evaluate() + ") annotated method. \n")
 
-            message.append("1: " + call.psi!!.parent.parent.parent.parent)
+            message.append("1: " + node.psi!!.parent.parent.parent.parent)
 
-            context.report(ISSUE_WRENCH_MISSING_CALLBACK, call, context.getLocation(call), message.toString())
+            context.report(ISSUE_WRENCH_MISSING_CALLBACK, node, context.getLocation(node), message.toString())
         }
     }
 

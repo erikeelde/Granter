@@ -2,12 +2,12 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
 dependencies {
-    compileOnly "com.android.tools.lint:lint-api:26.0.1"
-    compileOnly "com.android.tools.lint:lint-checks:26.0.1"
+    compileOnly "com.android.tools.lint:lint-api:26.1.0-alpha06"
+    compileOnly "com.android.tools.lint:lint-checks:26.1.0-alpha06"
     testCompile "junit:junit:4.12"
-    testCompile "com.android.tools.lint:lint:26.0.1"
-    testCompile "com.android.tools.lint:lint-tests:26.0.1"
-    testCompile "com.android.tools:testutils:26.0.1"
+    testCompile "com.android.tools.lint:lint:26.1.0-alpha06"
+    testCompile "com.android.tools.lint:lint-tests:26.1.0-alpha06"
+    testCompile "com.android.tools:testutils:26.1.0-alpha06"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,6 +15,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 jar {
     manifest {
-        attributes("Lint-Registry-v2": "com.example.granter_lint.IssueRegistry")
+        attributes("Lint-Registry-v2": "com.example.granter_lint.GranterIssueRegistry")
     }
 }
