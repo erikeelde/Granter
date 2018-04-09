@@ -25,7 +25,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
     private static final String ARGUMENT_RATIONALE = "argument_rationale";
     private static final String ARGUMENT_SYSTEM_SETTINGS_RATIONALE = "argument_system_settings_rationale";
-    private static final int RC_SETTINGS_DIALOG = 1324;
+    private static final int RC_SETTINGS_DIALOG = AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
     private static final int RC_PERMISSIONS = 13267;
     private boolean shouldHaveShownRationale;
     private String[] requestedPermissions;
