@@ -1,8 +1,9 @@
 apply plugin: 'com.android.library'
+apply plugin: 'digital.wup.android-maven-publish'
 
 android {
     compileSdkVersion 27
-    
+
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
@@ -18,6 +19,35 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+publishing {
+    repositories {
+        maven {
+            url "${artifactory_url}"
+            credentials {
+                username = "${artifactory_user}" // The publisher user name
+                password = "${artifactory_password}" // The publisher password
+            }
+        }
+    }
+
+    publications {
+        aar(MavenPublication) {
+            groupId = 'se.eelde'
+            artifactId = project.name
+            version = CIVersionName + CIVersionNameSufix
+
+            from components.android
+
+            artifact sourceJar
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
 }
 
 dependencies {
