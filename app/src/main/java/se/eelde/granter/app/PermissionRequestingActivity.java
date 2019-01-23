@@ -3,7 +3,9 @@ package se.eelde.granter.app;
 import android.Manifest;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.List;
@@ -77,13 +79,13 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     }
 
     @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Toast.makeText(this, "onPermissionsGranted:" + requestCode + ":" + perms.size(), Toast.LENGTH_LONG).show();
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Toast.makeText(this, "onPermissionsDenied:" + requestCode + ":" + perms.size(), Toast.LENGTH_LONG).show();
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
     }
 
 }

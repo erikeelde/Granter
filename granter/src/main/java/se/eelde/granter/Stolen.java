@@ -16,19 +16,19 @@ import pub.devrel.easypermissions.EasyPermissions;
  * towards Easypermissions to provide this functionality.
  */
 class Stolen {
-    static void callGrantedCallback(Object callee, int requestCode, List<String> perms) {
+    static void callGrantedCallback(@NonNull Object callee, int requestCode, @NonNull List<String> perms) {
         if (callee instanceof EasyPermissions.PermissionCallbacks) {
             ((EasyPermissions.PermissionCallbacks) callee).onPermissionsGranted(requestCode, perms);
         }
     }
 
-    static void callDeniedCallback(Object callee, int requestCode, List<String> perms) {
+    static void callDeniedCallback(@NonNull Object callee, int requestCode, @NonNull List<String> perms) {
         if (callee instanceof EasyPermissions.PermissionCallbacks) {
             ((EasyPermissions.PermissionCallbacks) callee).onPermissionsDenied(requestCode, perms);
         }
     }
 
-    static void callAnnotations(Object object, int requestCode) {
+    static void callAnnotations(@NonNull Object object, int requestCode) {
         Class clazz = object.getClass();
 
         while (clazz != null) {
@@ -60,7 +60,7 @@ class Stolen {
         }
     }
 
-    static boolean shouldShowRationale(Fragment fragment, String[] permissions) {
+    static boolean shouldShowRationale(@NonNull Fragment fragment, @NonNull String[] permissions) {
         for (String permission : permissions) {
             if (fragment.shouldShowRequestPermissionRationale(permission)) {
                 return true;
@@ -69,7 +69,7 @@ class Stolen {
         return false;
     }
 
-    static int[] grantsFromPermissions(Fragment fragment, @NonNull String[] requestedPermissions) {
+    static int[] grantsFromPermissions(@NonNull Fragment fragment, @NonNull String[] requestedPermissions) {
         int[] grantResults = new int[requestedPermissions.length];
 
         for (int i = 0; i < requestedPermissions.length; i++) {

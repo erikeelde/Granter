@@ -1,5 +1,6 @@
 package se.eelde.granter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -24,14 +25,14 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     private static final String ARGUMENT_REQUEST_CODE = "argument_request_code";
     private static final String ARGUMENT_RATIONALE = "argument_rationale";
     private static final String ARGUMENT_SYSTEM_SETTINGS_RATIONALE = "argument_system_settings_rationale";
-    private static final int RC_SETTINGS_DIALOG = 1324;
+    private static final int RC_SETTINGS_DIALOG = AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE;
     private static final int RC_PERMISSIONS = 13267;
     private boolean shouldHaveShownRationale;
     private String[] requestedPermissions;
     private int requestCode;
     private String systemSettingsrationale;
 
-    static GranterFragment newInstance(ArrayList<String> permissions, int requestCode, String rationale, String systemSettingRationale) {
+    static GranterFragment newInstance(@NonNull ArrayList<String> permissions, int requestCode, @NonNull String rationale, @NonNull String systemSettingRationale) {
         Bundle args = new Bundle();
         args.putStringArrayList(ARGUMENT_PERMISSIONS_ARRAY, permissions);
         args.putInt(ARGUMENT_REQUEST_CODE, requestCode);
@@ -46,28 +47,36 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Context context = getContext();
+        if (context == null) {
+            throw new IllegalStateException("Context cannot be null");
+        }
+        Bundle arguments = getArguments();
+        if (arguments == null) {
+            throw new IllegalStateException("Arguments cannot be null");
+        }
+        ArrayList<String> stringArrayList = arguments.getStringArrayList(ARGUMENT_PERMISSIONS_ARRAY);
 
-        ArrayList<String> stringArrayList = getArguments().getStringArrayList(ARGUMENT_PERMISSIONS_ARRAY);
         //noinspection ConstantConditions
         requestedPermissions = new String[stringArrayList.size()];
         stringArrayList.toArray(requestedPermissions);
-        requestCode = getArguments().getInt(ARGUMENT_REQUEST_CODE);
-        String rationale = getArguments().getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
-        systemSettingsrationale = getArguments().getString(ARGUMENT_SYSTEM_SETTINGS_RATIONALE, getString(R.string.permission_system_settings_rationale_message));
+        requestCode = arguments.getInt(ARGUMENT_REQUEST_CODE);
+        String rationale = arguments.getString(ARGUMENT_RATIONALE, getString(R.string.permission_rationale_message));
+        systemSettingsrationale = arguments.getString(ARGUMENT_SYSTEM_SETTINGS_RATIONALE, getString(R.string.permission_system_settings_rationale_message));
 
         shouldHaveShownRationale = Stolen.shouldShowRationale(this, requestedPermissions);
 
-        if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
-            if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
+            if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
                 EasyPermissions.requestPermissions(this,
                         rationale,
                         RC_PERMISSIONS,
                         requestedPermissions);
+            } else {
+                int[] ints = new int[requestedPermissions.length];
+                Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
+                callback(requestedPermissions, ints);
             }
-        } else {
-            int[] ints = new int[requestedPermissions.length];
-            Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
-            callback(requestedPermissions, ints);
         }
     }
 
@@ -77,7 +86,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
 
         // with no ui show we would get a null savedInstanceState in onCreate and
         // would not be able to distinguish between new creates and recreates of the fragment.
-        outState.putBoolean("recreated", true);
+        outState.putBoolean("state_recreated", true);
     }
 
     @Override
@@ -95,6 +104,7 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         }
     }
 
+    @SuppressWarnings("unused")
     @AfterPermissionGranted(RC_PERMISSIONS)
     public void allPermissionsGranted() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
@@ -113,23 +123,23 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     }
 
     @Override
-    public void onPermissionsGranted(int internalRequestCode, final List<String> perms) {
+    public void onPermissionsGranted(int internalRequestCode, @NonNull final List<String> perms) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
             new Handler(Looper.getMainLooper())
                     .post(new Runnable() {
                               @Override
                               public void run() {
-                                  Stolen.callGrantedCallback(getClass(), requestCode, perms);
+                                  Stolen.callGrantedCallback(getCallee(), requestCode, perms);
                               }
                           }
                     );
         } else {
-            Stolen.callGrantedCallback(getClass(), requestCode, perms);
+            Stolen.callGrantedCallback(getCallee(), requestCode, perms);
         }
     }
 
     @Override
-    public void onPermissionsDenied(int internalRequestCode, final List<String> perms) {
+    public void onPermissionsDenied(int internalRequestCode, @NonNull final List<String> perms) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
             // fix to be able to do fragment transactions in the permission callbacks
             new Handler(Looper.getMainLooper())
@@ -153,14 +163,14 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         }
     }
 
-    @Nullable
+    @NonNull
     public Object getCallee() {
         if (getParentFragment() != null) {
             return getParentFragment();
         } else if (getActivity() != null) {
             return getActivity();
         } else {
-            return null;
+            throw new IllegalStateException("Couldn't find callee for callback.");
         }
     }
 
