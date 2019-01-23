@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -16,8 +16,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.ben-manes.versions' version '0.17.0'
-    id 'digital.wup.android-maven-publish' version '3.3.0'
+    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'digital.wup.android-maven-publish' version '3.6.2'
 }
 
 allprojects {
