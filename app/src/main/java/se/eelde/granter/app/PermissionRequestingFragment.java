@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import se.eelde.granter.Granter;
-import se.eelde.granter.app.databinding.FragmentPermissionRequestingBinding;
 
 /**
  * Created in {@link R.layout#activity_permission_requesting}
@@ -20,21 +20,23 @@ public class PermissionRequestingFragment extends Fragment {
 
     private static final int RC_READ_CONTACTS_PERM = 122;
 
-    public static Fragment newInstance() {
+    static Fragment newInstance() {
         return new PermissionRequestingFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentPermissionRequestingBinding binding = FragmentPermissionRequestingBinding.inflate(inflater, container, false);
+        return inflater.inflate(R.layout.fragment_permission_requesting, container, false);
+    }
 
-        binding.fragmentPermission1Button.setOnClickListener(view -> new Granter.Builder(this)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        view.findViewById(R.id.fragment_permission_1_button).setOnClickListener(button -> new Granter.Builder(this)
                 .requestCode(RC_READ_CONTACTS_PERM)
                 .addPermission(Manifest.permission.READ_CONTACTS)
                 .build()
                 .show());
 
-        return binding.getRoot();
     }
 
     @AfterPermissionGranted(RC_READ_CONTACTS_PERM)

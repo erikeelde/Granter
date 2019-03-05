@@ -11,14 +11,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import se.eelde.granter.app.databinding.ActivityRegularPermissionBinding;
 
 public class RegularPermissionActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_LOCATION_RATIONALE = 213;
     private static final int REQUEST_PERMISSION_LOCATION = 212;
-    private ActivityRegularPermissionBinding binding;
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, RegularPermissionActivity.class));
@@ -28,15 +25,14 @@ public class RegularPermissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regular_permission);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_regular_permission);
 
-        binding.regularPermissionButton.setOnClickListener(view -> checkPermissions());
+        findViewById(R.id.regular_permission_button).setOnClickListener(view -> checkPermissions());
     }
 
     private void moveToNextStep() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(binding.fragmentContainer.getId(), DummyFragment.newInstance())
+                .replace(R.id.fragment_container, DummyFragment.newInstance())
                 .commit();
     }
 

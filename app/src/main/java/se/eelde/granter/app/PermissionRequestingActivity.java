@@ -9,11 +9,9 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import se.eelde.granter.Granter;
-import se.eelde.granter.app.databinding.ActivityPermissionRequestingBinding;
 
 public class PermissionRequestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
@@ -21,29 +19,28 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
     public static final int RC_2 = 122;
     public static final int RC_multiple = 123;
     private static final String TAG = "PermissionActivity";
-    private ActivityPermissionRequestingBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_permission_requesting);
+        setContentView(R.layout.activity_permission_requesting);
 
-        binding.regularPermission.setOnClickListener(view -> RegularPermissionActivity.start(this));
+        findViewById(R.id.regular_permission).setOnClickListener(view -> RegularPermissionActivity.start(this));
 
-        binding.permission1Button.setOnClickListener(view -> new Granter.Builder(this)
+        findViewById(R.id.permission_1_button).setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_CAMERA)
                 .addPermission(Manifest.permission.CAMERA)
                 .build()
                 .show());
 
-        binding.permission2Button.setOnClickListener(view -> new Granter.Builder(this)
+        findViewById(R.id.permission_2_button).setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_2)
                 .addPermission(Manifest.permission.SEND_SMS)
                 .build()
                 .show());
 
-        binding.permissionMultipleButton.setOnClickListener(view -> new Granter.Builder(this)
+        findViewById(R.id.permission_multiple_button).setOnClickListener(view -> new Granter.Builder(this)
                 .requestCode(RC_multiple)
                 .addPermission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION)
                 .rationale("This app neeeds access to audio and location!")
@@ -53,7 +50,7 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(binding.fragmentContainer.getId(), PermissionRequestingFragment.newInstance())
+                    .replace(R.id.fragment_container, PermissionRequestingFragment.newInstance())
                     .commit();
         }
     }
@@ -64,7 +61,7 @@ public class PermissionRequestingActivity extends AppCompatActivity implements E
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(binding.fragmentContainer.getId(), DummyFragment.newInstance())
+                .replace(R.id.fragment_container, DummyFragment.newInstance())
                 .commit();
     }
 
