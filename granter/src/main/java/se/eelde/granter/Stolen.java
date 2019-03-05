@@ -1,13 +1,13 @@
 package se.eelde.granter;
 
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
