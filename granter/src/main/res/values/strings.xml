@@ -1,5 +1,4 @@
 <resources>
     <string name="permission_rationale_message">This app needs access to permissions to work.</string>
     <string name="permission_system_settings_rationale_message">Go to system settings to set up permissions.</string>
-    >
 </resources>
