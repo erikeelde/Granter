@@ -1,15 +1,12 @@
 package se.eelde.granter;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -18,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public class GranterFragment extends Fragment implements EasyPermissions.PermissionCallbacks {
 
@@ -47,10 +45,6 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = getContext();
-        if (context == null) {
-            throw new IllegalStateException("Context cannot be null");
-        }
         Bundle arguments = getArguments();
         if (arguments == null) {
             throw new IllegalStateException("Arguments cannot be null");
@@ -67,16 +61,8 @@ public class GranterFragment extends Fragment implements EasyPermissions.Permiss
         shouldHaveShownRationale = Stolen.shouldShowRationale(this, requestedPermissions);
 
         if (savedInstanceState == null) {
-            if (!EasyPermissions.hasPermissions(getContext(), requestedPermissions)) {
-                EasyPermissions.requestPermissions(this,
-                        rationale,
-                        RC_PERMISSIONS,
-                        requestedPermissions);
-            } else {
-                int[] ints = new int[requestedPermissions.length];
-                Arrays.fill(ints, PackageManager.PERMISSION_GRANTED);
-                callback(requestedPermissions, ints);
-            }
+            PermissionRequest permissionRequest = new PermissionRequest.Builder(this, RC_PERMISSIONS, requestedPermissions).setRationale(rationale).build();
+            EasyPermissions.requestPermissions(permissionRequest);
         }
     }
 
