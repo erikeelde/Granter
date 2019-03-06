@@ -73,7 +73,7 @@ class Stolen {
         int[] grantResults = new int[requestedPermissions.length];
 
         for (int i = 0; i < requestedPermissions.length; i++) {
-            grantResults[i] = EasyPermissions.hasPermissions(fragment.getContext(), requestedPermissions[i]) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED;
+            grantResults[i] = EasyPermissions.hasPermissions(fragment.requireContext(), requestedPermissions[i]) ? PackageManager.PERMISSION_GRANTED : PackageManager.PERMISSION_DENIED;
         }
 
         return grantResults;
